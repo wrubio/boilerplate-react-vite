@@ -1,7 +1,7 @@
 import './App.css';
 
 function App() {
-  return <>hola mundo</>;
+  return <>Yai! Wolrd</>;
 }
 
 export default App;

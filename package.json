@@ -5,12 +5,21 @@
   "type": "module",
   "scripts": {
     "dev": "vite",
+    "test": "vitest run",
     "build": "tsc -b && vite build",
     "lint": "eslint . --ignore-pattern 'dist' --ignore-pattern 'cypress'",
+    "lint:fix": "pnpm lint --fix && pnpm format",
     "format": "prettier --write .",
-    "lint:fix": "yarn lint --fix && yarn format",
     "preview": "vite preview",
-    "cypress:open": "cypress open --config-file cypress.config.mts"
+    "cypress:open": "cypress open --config-file cypress.config.mts",
+    "prepare": "husky",
+    "postinstall": "pnpm run setup-husky",
+    "setup-husky": "[ -d .husky ] || (pnpm exec husky init && rm -f .husky/pre-commit && pnpm run husky-pre-files)",
+    "husky-pre-files": "pnpm run husky-pre-push && pnpm run husky-pre-commit",
+    "husky-pre-commit": "[ -f .husky/pre-commit ] || pnpm run pre-commit",
+    "husky-pre-push": "[ -f .husky/pre-push ] || pnpm run pre-push",
+    "pre-commit": "echo \"#!/bin/sh\n pnpm lint-staged && pnpm vitest run\" > .husky/pre-commit && chmod +x .husky/pre-commit",
+    "pre-push": "echo \"#!/bin/sh\n pnpm build\" > .husky/pre-push && chmod +x .husky/pre-push"
   },
   "dependencies": {
     "react": "^18.3.1",
@@ -19,13 +28,17 @@
   },
   "devDependencies": {
     "@eslint/js": "^9.9.0",
-    "@types/cypress": "^1.1.3",
+    "@testing-library/jest-dom": "^6.5.0",
+    "@testing-library/react": "^16.0.1",
+    "@types/jest": "^29.5.13",
     "@types/node": "^22.5.2",
     "@types/react": "^18.3.3",
     "@types/react-dom": "^18.3.0",
-    "@vitejs/plugin-react": "^4.3.1",
+    "@typescript-eslint/parser": "^8.6.0",
     "@vitejs/plugin-react-swc": "^3.5.0",
+    "@vitest/eslint-plugin": "^1.1.4",
     "cypress": "^13.14.2",
+    "depcheck": "^1.4.7",
     "eslint": "^9.9.0",
     "eslint-config-prettier": "^9.1.0",
     "eslint-plugin-prettier": "^5.2.1",
@@ -40,14 +53,5 @@
     "typescript-eslint": "^8.0.1",
     "vite": "^5.4.1",
     "vitest": "^2.1.1"
-  },
-  "lint-staged": {
-    "*.{js,jsx,ts,tsx}": [
-      "eslint --fix",
-      "prettier --write"
-    ],
-    "*.css": [
-      "prettier --write"
-    ]
   }
 }
